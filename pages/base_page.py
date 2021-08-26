@@ -14,3 +14,6 @@ class BasePage():
         except (NoSuchElementException):
             return False
         return True
+
+    def is_correct_link(self, substring_url):
+        assert substring_url in self.browser.current_url, f"The expected link is not as actual link ('{self.browser.current_url}')"
