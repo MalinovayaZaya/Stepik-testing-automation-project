@@ -25,6 +25,14 @@ class ProductPage(BasePage):
         assert self.browser.find_element(*ProductPageLocators.PRODUCT_COST).text == \
                self.browser.find_element(*ProductPageLocators.PRODUCT_COST_ALERT).text, "Wrong cost in cart"
 
+    def should_not_be_success_message(self):
+        assert not self.is_element_present(*ProductPageLocators.SUCCESS_MESSAGE), \
+            "Success message is presented"
+
+    def should_not_be_success_massage_after_time(self):
+        assert not self.is_disappeared(*ProductPageLocators.SUCCESS_MESSAGE), \
+            "Success message did not disappear after a while"
+
     def solve_quiz_and_get_code(self):
         alert = self.browser.switch_to.alert
         x = alert.text.split(" ")[2]
