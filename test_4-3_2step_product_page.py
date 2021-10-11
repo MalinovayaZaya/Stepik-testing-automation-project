@@ -1,12 +1,14 @@
 import pytest
+import time
 
 from pages.product_page import ProductPage
 from pages.basket_page import BasketPage
+from pages.login_page import LoginPage
 
 
 def links_collections(func):
     return pytest.mark.parametrize('link', [
-        "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer0",
+        "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer0"
         "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer1",
         "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer2",
         "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer3",
@@ -25,18 +27,29 @@ def links_collections(func):
 def test_guest_cant_see_success_message_after_adding_product_to_basket(browser, link):
     product_page = ProductPage(browser, link)
     product_page.open()
-    product_page.add_to_cart()
+    product_page.add_to_cart_action_product()
     product_page.should_not_be_success_message()
 
 
+@links_collections
+def test_guest_can_add_product_to_basket(browser, link):
+    product_page = ProductPage(browser, link)
+    product_page.open()
+    product_page.add_to_cart_action_product()
 
+
+@links_collections
+def test_guest_cant_see_success_message(browser, link):
+    product_page = ProductPage(browser, link)
+    product_page.open()
+    product_page.should_not_be_success_message()
 
 
 @links_collections
 def test_message_disappeared_after_adding_product_to_basket(browser, link):
     product_page = ProductPage(browser, link)
     product_page.open()
-    product_page.add_to_cart()
+    product_page.add_to_cart_action_product()
     product_page.should_not_be_success_massage_after_time()
 
 
@@ -55,7 +68,7 @@ def test_guest_can_go_to_login_page_from_product_page(browser):
 
 
 def test_guest_cant_see_product_in_basket_opened_from_main_page(browser):
-    link = "http://selenium1py.pythonanywhere.com/"
+    link = "http://selenium1py.pythonanywhere.com/en-gb/catalogue/the-city-and-the-stars_95/"
     product_page = ProductPage(browser, link)
     product_page.open()
     product_page.should_be_basket_link()
@@ -66,7 +79,18 @@ def test_guest_cant_see_product_in_basket_opened_from_main_page(browser):
     basket_page.should_be_empty_basket_massage()
 
 
+@pytest.mark.autorizad_user_can_add_product_to_basket
 class TestUserAddToBasketFromProductPage():
+    @pytest.fixture(scope="function", autouse=True)
+    def setup(self, browser):
+        link = "http://selenium1py.pythonanywhere.com/en-gb/catalogue/the-city-and-the-stars_95/"
+        product_page = LoginPage(browser, link)
+        product_page.open()
+        product_page.go_to_login_page()
+        email = str(time.time()) + "@test.test"
+        product_page.register_new_user(email, "Test1234567890")
+        product_page.should_be_authorized_user()
+
     def test_user_can_add_product_to_basket(self, browser):
         link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
         product_page = ProductPage(browser, link)
