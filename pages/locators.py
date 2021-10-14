@@ -10,9 +10,8 @@ class BasePageLocators():
 
 
 class MainPageLocators():
-    # def __init__(self, *args, **kwargs):
-    #     super(MainPage, self).__init__(*args, **kwargs)
-    LOGIN_LINK = (By.CSS_SELECTOR, "#login_link")
+    def __init__(self, *args, **kwargs):
+        super(MainPage, self).__init__(*args, **kwargs)
 
 
 class LoginPageLocators():
